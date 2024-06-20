@@ -58,62 +58,52 @@ public class Serializer {
         DataOutputStream dataStream = new DataOutputStream(byteStream);
 
         try {
-            switch (obj) {
-                case null -> {
-                    dataStream.writeByte(DataType.NULL.getValue());
+            // java 17 moment
+            if (obj == null) {
+                dataStream.writeByte(DataType.NULL.getValue());
+            } else if (obj instanceof String s) {
+                dataStream.writeByte(DataType.STRING.getValue());
+                byte[] strBytes = s.getBytes();
+                dataStream.writeInt(strBytes.length);
+                dataStream.write(strBytes);
+            } else if (obj instanceof Integer i) {
+                dataStream.writeByte(DataType.INTEGER.getValue());
+                dataStream.writeInt(i);
+            } else if (obj instanceof Boolean b) {
+                dataStream.writeByte(DataType.BOOLEAN.getValue());
+                dataStream.writeBoolean(b);
+            } else if (obj instanceof Long l) {
+                dataStream.writeByte(DataType.LONG.getValue());
+                dataStream.writeLong(l);
+            } else if (obj instanceof Float f) {
+                dataStream.writeByte(DataType.FLOAT.getValue());
+                dataStream.writeFloat(f);
+            } else if (obj instanceof Double d) {
+                dataStream.writeByte(DataType.DOUBLE.getValue());
+                dataStream.writeDouble(d);
+            } else if (obj instanceof Character c) {
+                dataStream.writeByte(DataType.CHAR.getValue());
+                dataStream.writeChar(c);
+            } else if (obj instanceof byte[] b) {
+                dataStream.writeByte(DataType.BYTEARRAY.getValue());
+                dataStream.writeInt(b.length);
+                for (byte b1 : b) {
+                    dataStream.writeByte(b1);
                 }
-                case String s -> {
-                    dataStream.writeByte(DataType.STRING.getValue());
-                    byte[] strBytes = s.getBytes();
-                    dataStream.writeInt(strBytes.length);
-                    dataStream.write(strBytes);
-                }
-                case Integer i -> {
-                    dataStream.writeByte(DataType.INTEGER.getValue());
-                    dataStream.writeInt(i);
-                }
-                case Boolean b -> {
-                    dataStream.writeByte(DataType.BOOLEAN.getValue());
-                    dataStream.writeBoolean(b);
-                }
-                case Long l -> {
-                    dataStream.writeByte(DataType.LONG.getValue());
-                    dataStream.writeLong(l);
-                }
-                case Float f -> {
-                    dataStream.writeByte(DataType.FLOAT.getValue());
-                    dataStream.writeFloat(f);
-                }
-                case Double d -> {
-                    dataStream.writeByte(DataType.DOUBLE.getValue());
-                    dataStream.writeDouble(d);
-                }
-                case Character c -> {
-                    dataStream.writeByte(DataType.CHAR.getValue());
-                    dataStream.writeChar(c);
-                }
-                case byte[] b -> {
-                    dataStream.writeByte(DataType.BYTEARRAY.getValue());
-                    dataStream.writeInt(b.length);
-                    for (byte b1 : b) {
-                        dataStream.writeByte(b1);
-                    }
-                }
-                case ArrayList<?> a -> {
-                    dataStream.writeByte(DataType.ARRAYLIST.getValue());
-                    byte[] itemsBytes = serialize(a);
-                    dataStream.writeInt(itemsBytes.length);
-                    dataStream.write(itemsBytes);
-                }
-                case Packet p -> {
-                    dataStream.writeByte(DataType.PACKET.getValue()); // DataType
-                    List<Object> packetData = p.getPacketData();
-                    byte[] packetDataBytes = serialize(packetData);
-                    dataStream.writeByte(p.getPacketId());            // Packet ID
-                    dataStream.writeInt(packetDataBytes.length);      // Packet data length
-                    dataStream.write(packetDataBytes);                // Packet data
-                }
-                default -> throw new UnsupportedObjectTypeException("Unsupported object type: " + obj.getClass().getSimpleName());
+            } else if (obj instanceof ArrayList<?> a) {
+                dataStream.writeByte(DataType.ARRAYLIST.getValue());
+                byte[] itemsBytes = serialize(a);
+                dataStream.writeInt(itemsBytes.length);
+                dataStream.write(itemsBytes);
+            } else if (obj instanceof Packet p) {
+                dataStream.writeByte(DataType.PACKET.getValue()); // DataType
+                List<Object> packetData = p.getPacketData();
+                byte[] packetDataBytes = serialize(packetData);
+                dataStream.writeByte(p.getPacketId());            // Packet ID
+                dataStream.writeInt(packetDataBytes.length);      // Packet data length
+                dataStream.write(packetDataBytes);                // Packet data
+            } else {
+                throw new UnsupportedObjectTypeException("Unsupported object type: " + obj.getClass().getSimpleName());
             }
 
             dataStream.close();

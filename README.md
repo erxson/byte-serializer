@@ -15,7 +15,7 @@
     <dependency>
         <groupId>xd.ericsson</groupId>
         <artifactId>serializer</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.1.1-SNAPSHOT</version>
     </dependency>
 </dependencies>
 ```
@@ -27,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    implementation("xd.ericsson:serializer:1.1-SNAPSHOT")
+    implementation("xd.ericsson:serializer:1.1.1-SNAPSHOT")
 }
 ```
 
@@ -41,6 +41,6 @@ repositories {
 }
 
 dependencies {
-    implementation "xd.ericsson:serializer:1.1-SNAPSHOT"
+    implementation "xd.ericsson:serializer:1.1.1-SNAPSHOT"
 }
 ```
